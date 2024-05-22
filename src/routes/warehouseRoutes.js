@@ -1,6 +1,12 @@
 import express from "express";
+import { getInventory } from "../controllers/warehouseContoller.js";
 
 const warehouseRoutes = express.Router();
+
+// Get all products in warehouse (inventory)
+warehouseRoutes.get("/", getInventory);
+
+warehouseRoutes.post("/reorder", reorder);
 
 export default warehouseRoutes;
 
