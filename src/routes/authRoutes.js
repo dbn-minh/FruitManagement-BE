@@ -3,11 +3,10 @@ import { login } from "../controllers/authController.js";
 
 const authRoutes = express.Router();
 
-authRoutes.get("/login", login);
+authRoutes.post("/login", login);
 
 export default authRoutes;
 
 // /Auth
-// 	(Có cần refreshToken?)
 // 	/login (POST)
 // 	/signup (POST)

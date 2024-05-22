@@ -1,35 +1,35 @@
 import _sequelize from 'sequelize';
 const { Model, Sequelize } = _sequelize;
 
-export default class shelves extends Model {
+export default class warehouse_products extends Model {
   static init(sequelize, DataTypes) {
   return super.init({
-    shelf_id: {
-      autoIncrement: true,
+    warehouse_id: {
       type: DataTypes.INTEGER,
       allowNull: false,
-      primaryKey: true
+      primaryKey: true,
+      references: {
+        model: 'warehouses',
+        key: 'warehouse_id'
+      }
+    },
+    product_id: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+      primaryKey: true,
+      references: {
+        model: 'products',
+        key: 'product_id'
+      }
     },
     quantity: {
       type: DataTypes.FLOAT,
-      allowNull: true
-    },
-    category_id: {
-      type: DataTypes.INTEGER,
       allowNull: true,
-      references: {
-        model: 'categories',
-        key: 'category_id'
-      }
-    },
-    date_on_shelf: {
-      type: DataTypes.DATE,
-      allowNull: true,
-      defaultValue: Sequelize.Sequelize.literal('CURRENT_TIMESTAMP')
+      defaultValue: 0
     }
   }, {
     sequelize,
-    tableName: 'shelves',
+    tableName: 'warehouse_products',
     timestamps: false,
     indexes: [
       {
@@ -37,14 +37,15 @@ export default class shelves extends Model {
         unique: true,
         using: "BTREE",
         fields: [
-          { name: "shelf_id" },
+          { name: "warehouse_id" },
+          { name: "product_id" },
         ]
       },
       {
-        name: "category_id",
+        name: "product_id",
         using: "BTREE",
         fields: [
-          { name: "category_id" },
+          { name: "product_id" },
         ]
       },
     ]
