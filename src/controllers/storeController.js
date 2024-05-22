@@ -20,6 +20,9 @@ export const getCategoryProducts = async (req, res) => {
     let data = await model.products.findAll({
       where: {
         category_id,
+        selling_price: {
+          [Op.gt]: 0,
+        },
       },
     });
     responseData(res, "Success", data, 200);
@@ -49,11 +52,11 @@ export const getProductDetails = async (req, res) => {
 export const getProduct = async (req, res) => {
   try {
     let data = await model.products.findAll({
-      include: ["shelves"],
+      // include: ["shelf", "product"],
       // Only get products which selling_price >= 0
       where: {
         selling_price: {
-          [Op.gte]: 0,
+          [Op.gt]: 0,
         },
       },
     });
@@ -75,7 +78,7 @@ export const removeProduct = async (req, res) => {
       return responseData(res, "No product found", "", 404);
     }
     // Selling_price -> -1: not fetch
-    getProduct.selling_price = -1;
+    getProduct.selling_price = 0;
     await model.products.update(getProduct.dataValues, {
       where: {
         product_id: getProduct.product_id,

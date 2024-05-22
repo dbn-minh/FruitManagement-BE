@@ -22,13 +22,13 @@ storeRoutes.get("/category/:category_id", getCategoryProducts);
 storeRoutes.get("/category/:category_id/:product_id", getProductDetails);
 
 // Give the Product list in Admin's store
-storeRoutes.get("/allProduct", getProduct);
+storeRoutes.get("/all-product", getProduct);
 
 // Add new product in Admin's store
-storeRoutes.post("/allProduct/add-product", addProduct);
+storeRoutes.post("/all-product/add-product", addProduct);
 
 // Delete product in Admin's store
-storeRoutes.put("/allProduct/remove-product", removeProduct);
+storeRoutes.put("/all-product/remove-product", removeProduct);
 
 // search products in store
 storeRoutes.get("/search/:product_name", searchProducts);
