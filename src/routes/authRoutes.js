@@ -8,6 +8,5 @@ authRoutes.post("/login", login);
 export default authRoutes;
 
 // /Auth
-// 	(Có cần refreshToken?)
 // 	/login (POST)
 // 	/signup (POST)
