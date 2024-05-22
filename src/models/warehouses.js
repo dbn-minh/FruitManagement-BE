@@ -9,6 +9,10 @@ export default class warehouses extends Model {
       type: DataTypes.INTEGER,
       allowNull: false,
       primaryKey: true
+    },
+    quantity: {
+      type: DataTypes.INTEGER,
+      allowNull: true
     }
   }, {
     sequelize,
