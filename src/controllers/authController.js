@@ -1,77 +1,83 @@
 import { responseData } from "../config/Response.js";
 import initModels from "../models/init-models.js";
 import sequelize from "../models/connect.js";
-
-const bcrypt = require('bcrypt');
+import bcrypt from "bcrypt";
 
 let model = initModels(sequelize);
 
 export const login = async (req, res) => {
-    let { roleID, userName, password } = req.body;
+  let { user_name, user_password } = req.body;
 
   // check email and password == table user
-  let checkUser = await model.account.findOne({
+  let checkUser = await model.users.findOne({
     where: {
-      roleID: roleID,
-      userName: userName,
+      user_name,
     },
   });
 
   // exist => login successfully
   if (checkUser) {
-    if (checkUser.password == password) {
-      let token = { userID: checkUser.userID };
-      responseData(res, "Login successfully", token, 200);
-    } else {
-      // wrong password
-      responseData(res, "wrong password", "", 400);
-    }
+    bcrypt.compare(user_password, checkUser.user_password, (err, result) => {
+      if (err) {
+        console.error(err);
+        responseData(res, "An error occurred during login", "", 500);
+        return;
+      }
+
+      if (result) {
+        let token = { user_id: checkUser.user_id, role_id: checkUser.role_id };
+        responseData(res, "Login successfully", token, 200);
+      } else {
+        // wrong password
+        responseData(res, "Wrong password", "", 400);
+      }
+    });
   } else {
     // not exist
-    responseData(res, "Account doesn't exist", "", 400);
+    responseData(res, "User doesn't exist", "", 400);
   }
 };
 
 export const signup = async (req, res) => {
-    try{
-        let {full_name,
-             email,
-             userName, 
-             pass_word,
-             phone,
-             address,
-             bankAccount
-            } = req.body;
+  // try {
+  let {
+    full_name,
+    address,
+    user_name,
+    bank_account,
+    user_password,
+    phone,
+    email,
+  } = req.body;
 
-            let checkUser = await model.users.findOne({
-                where: {
-                    email
-                }
-            })
+  let checkUser = await model.users.findOne({
+    where: {
+      user_name,
+    },
+  });
 
-            if (checkUser) {
-                responseData(res,"Email already exists", "", 400);
-            }
+  if (checkUser) {
+    return responseData(res, "Username already exists", "", 400);
+  }
 
-        //hash the pass
-        let hashedPassword = bcrypt.hashSync(pass_word, 10);
+  //hash the pass
+  let hashedPassword = bcrypt.hashSync(user_password, 10);
 
-        let newData = {
-          full_name,
-          email,
-          userName,
-          password: hashedPassword,
-          role_id: 'user',
-          phone,
-          address,
-          bankAccount
-      };
+  let newData = {
+    full_name,
+    address,
+    user_name,
+    bank_account,
+    user_password: hashedPassword,
+    phone,
+    email,
+    role_id: 2,
+  };
 
-        await model.users.create({newData})
+  await model.users.create(newData);
 
-        responseData(res, "Sucessfully sign up","", 200);
-        
-    } catch {
-        responseData(res, "Error", "", 500);
-    }
+  responseData(res, "Sucessfully sign up", "", 200);
+  // } catch {
+  //   responseData(res, "Error", "", 500);
+  // }
 };
