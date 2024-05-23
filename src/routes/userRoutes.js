@@ -1,6 +1,24 @@
 import express from "express";
+import {
+  checkOut,
+  getOrder,
+  getProfile,
+  updateProfile,
+} from "../controllers/userController.js";
 
 const userRoutes = express.Router();
+
+// Get user profile
+userRoutes.get("/:user_id", getProfile);
+
+// Update profile
+userRoutes.put("/:user_id/edit", updateProfile);
+
+// Checkout to buy products
+userRoutes.post("/:user_id/checkout", checkOut);
+
+// View Order (transactions)
+userRoutes.get("/:user_id/order", getOrder);
 
 export default userRoutes;
 

@@ -26,6 +26,10 @@ export default class orders extends Model {
     total_price: {
       type: DataTypes.FLOAT,
       allowNull: true
+    },
+    order_quantity: {
+      type: DataTypes.INTEGER,
+      allowNull: true
     }
   }, {
     sequelize,

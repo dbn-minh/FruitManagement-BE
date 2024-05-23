@@ -13,6 +13,14 @@ export default class categories extends Model {
     category_name: {
       type: DataTypes.STRING(255),
       allowNull: false
+    },
+    category_img: {
+      type: DataTypes.STRING(255),
+      allowNull: false
+    },
+    category_description: {
+      type: DataTypes.STRING(255),
+      allowNull: false
     }
   }, {
     sequelize,
