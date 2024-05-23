@@ -78,6 +78,7 @@ export const getProductsShelfs = async (req, res) => {
   }
 };
 
+// add the function to create the new export_id
 export const addProductToShelf = async (req, res) => {
   try {
     let products = req.body.products;
