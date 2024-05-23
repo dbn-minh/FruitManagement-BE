@@ -228,13 +228,16 @@ while len(order_product_pairs) <= 100:
     order_product_pairs.add((order_id, product_id))
 
 for order_id, product_id in order_product_pairs:
+    
+    order_product_quantity = random.randint(1, 10)
+    
     cursor.execute(
         """
         INSERT INTO order_products 
-        (order_id, product_id) 
-        VALUES (%s, %s)
+        (order_id, product_id, order_product_quantity) 
+        VALUES (%s, %s, %s)
         """, 
-        (order_id, product_id)
+        (order_id, product_id, order_product_quantity)
     )
     
 # Generate unique pairs for order_products
