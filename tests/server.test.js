@@ -8,8 +8,4 @@ describe('Server', () => {
     expect(response.status).toBe(404);
   });
 
-//   it('should respond with a 200 for the root route', async () => {
-//     const response = await request(app).get('/');
-//     expect(response.status).toBe(200);
-//   });
 });
