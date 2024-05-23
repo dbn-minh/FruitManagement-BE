@@ -6,7 +6,7 @@ import {
   getProductsShelfs,
   reorder,
   reorderProduct,
-} from "../controllers/warehouseContoller.js";
+} from "../controllers/warehouseController.js";
 
 const warehouseRoutes = express.Router();
 

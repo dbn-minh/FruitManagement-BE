@@ -104,7 +104,7 @@ export const checkOut = async (req, res) => {
       await model.order_products.create({
         order_id: newOrder.order_id,
         product_id,
-        quantity, // wait for database
+        order_product_quantity: quantity, // wait for database
         subtotal, // wait for database
       });
     }
@@ -123,12 +123,12 @@ export const checkOut = async (req, res) => {
 // waiting for database
 export const getOrder = async (req, res) => {
   // try {
-  //   let { user_id } = req.params;
-  //   let data = await model.orders.findOne({
-  //     where: { user_id },
-  //     include: ["product"],
-  //   });
-  //   responseData(res, "Success", data, 200);
+  let { user_id } = req.params;
+  let data = await model.orders.findOne({
+    where: { user_id },
+    include: ["order_products", "product_id_products"],
+  });
+  responseData(res, "Success", data, 200);
   // } catch {
   //   responseData(res, "Error ...", "", 500);
   // }
