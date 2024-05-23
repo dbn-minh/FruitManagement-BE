@@ -137,7 +137,10 @@ DROP TABLE IF EXISTS `order_products`;
 CREATE TABLE `order_products` (
   `order_id` INT NOT NULL,
   `product_id` INT NOT NULL,
-  PRIMARY KEY (`order_id`, `product_id`)
+  `order_product_quantity` INT DEFAULT NULL,
+  PRIMARY KEY (`order_id`, `product_id`),
+  FOREIGN KEY (`order_id`) REFERENCES `orders` (`order_id`),
+  FOREIGN KEY (`product_id`) REFERENCES `products` (`product_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 DROP TABLE IF EXISTS `warehouse_products`;
