@@ -237,11 +237,15 @@ for order_id, product_id in order_product_pairs:
     )
     
 # Generate unique pairs for order_products
-shelf_product_pairs = set()
-while len(shelf_product_pairs) <= 100:
-    shelf_id = random.randint(1, total_shelf)
-    product_id = random.randint(1, total_product)
-    shelf_product_pairs.add((shelf_id, product_id))
+query = """
+    SELECT s.shelf_id, p.product_id
+    FROM shelves s
+    JOIN products p ON s.category_id = p.category_id
+    LIMIT 100;
+"""
+cursor.execute(query)
+results = cursor.fetchall()
+shelf_product_pairs = set(results)
 # Generate fake data for shelf_product (assuming shelf_product is a table to link products to shelves)
 for shelf_id, product_id in shelf_product_pairs:
     quantity = random.randint(1, 10)
