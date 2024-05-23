@@ -7,7 +7,7 @@ export default class users extends Model {
     user_id: {
       autoIncrement: true,
       type: DataTypes.INTEGER,
-      allowNull: false, 
+      allowNull: false,
       primaryKey: true
     },
     user_name: {

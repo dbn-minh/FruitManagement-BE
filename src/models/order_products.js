@@ -7,12 +7,24 @@ export default class order_products extends Model {
     order_id: {
       type: DataTypes.INTEGER,
       allowNull: false,
-      primaryKey: true
+      primaryKey: true,
+      references: {
+        model: 'orders',
+        key: 'order_id'
+      }
     },
     product_id: {
       type: DataTypes.INTEGER,
       allowNull: false,
-      primaryKey: true
+      primaryKey: true,
+      references: {
+        model: 'products',
+        key: 'product_id'
+      }
+    },
+    order_product_quantity: {
+      type: DataTypes.INTEGER,
+      allowNull: true
     }
   }, {
     sequelize,
@@ -25,6 +37,13 @@ export default class order_products extends Model {
         using: "BTREE",
         fields: [
           { name: "order_id" },
+          { name: "product_id" },
+        ]
+      },
+      {
+        name: "product_id",
+        using: "BTREE",
+        fields: [
           { name: "product_id" },
         ]
       },

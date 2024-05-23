@@ -29,18 +29,24 @@ export default function initModels(sequelize) {
   const warehouse_products = _warehouse_products.init(sequelize, DataTypes);
   const warehouses = _warehouses.init(sequelize, DataTypes);
 
+  orders.belongsToMany(products, { as: 'product_id_products', through: order_products, foreignKey: "order_id", otherKey: "product_id" });
+  products.belongsToMany(orders, { as: 'order_id_orders', through: order_products, foreignKey: "product_id", otherKey: "order_id" });
   products.belongsToMany(shelves, { as: 'shelf_id_shelves', through: shelf_products, foreignKey: "product_id", otherKey: "shelf_id" });
   products.belongsToMany(warehouses, { as: 'warehouse_id_warehouses', through: warehouse_products, foreignKey: "product_id", otherKey: "warehouse_id" });
-  shelves.belongsToMany(products, { as: 'product_id_products', through: shelf_products, foreignKey: "shelf_id", otherKey: "product_id" });
+  shelves.belongsToMany(products, { as: 'product_id_products_shelf_products', through: shelf_products, foreignKey: "shelf_id", otherKey: "product_id" });
   warehouses.belongsToMany(products, { as: 'product_id_products_warehouse_products', through: warehouse_products, foreignKey: "warehouse_id", otherKey: "product_id" });
   products.belongsTo(categories, { as: "category", foreignKey: "category_id"});
   categories.hasMany(products, { as: "products", foreignKey: "category_id"});
   shelves.belongsTo(categories, { as: "category", foreignKey: "category_id"});
   categories.hasMany(shelves, { as: "shelves", foreignKey: "category_id"});
+  order_products.belongsTo(orders, { as: "order", foreignKey: "order_id"});
+  orders.hasMany(order_products, { as: "order_products", foreignKey: "order_id"});
   exports.belongsTo(products, { as: "product", foreignKey: "product_id"});
   products.hasMany(exports, { as: "exports", foreignKey: "product_id"});
   imports.belongsTo(products, { as: "product", foreignKey: "product_id"});
   products.hasMany(imports, { as: "imports", foreignKey: "product_id"});
+  order_products.belongsTo(products, { as: "product", foreignKey: "product_id"});
+  products.hasMany(order_products, { as: "order_products", foreignKey: "product_id"});
   shelf_products.belongsTo(products, { as: "product", foreignKey: "product_id"});
   products.hasMany(shelf_products, { as: "shelf_products", foreignKey: "product_id"});
   warehouse_products.belongsTo(products, { as: "product", foreignKey: "product_id"});
