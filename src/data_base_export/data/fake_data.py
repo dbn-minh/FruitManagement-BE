@@ -210,13 +210,14 @@ for _ in range(100):
     user_id = random.choice(user_ids)
     total_price = round(random.uniform(20, 100), 2)
     order_date = fake.date_this_year()
+    order_quantity = random.randint(1, 20)
     cursor.execute(
         """
         INSERT INTO orders 
-        (user_id, total_price, order_date) 
-        VALUES (%s, %s, %s)
+        (user_id, total_price, order_date, order_quantity) 
+        VALUES (%s, %s, %s, %s)
         """, 
-        (user_id, total_price, order_date)
+        (user_id, total_price, order_date, order_quantity)
     )
 
 # Generate unique pairs for order_products
@@ -237,11 +238,15 @@ for order_id, product_id in order_product_pairs:
     )
     
 # Generate unique pairs for order_products
-shelf_product_pairs = set()
-while len(shelf_product_pairs) <= 100:
-    shelf_id = random.randint(1, total_shelf)
-    product_id = random.randint(1, total_product)
-    shelf_product_pairs.add((shelf_id, product_id))
+query = """
+    SELECT s.shelf_id, p.product_id
+    FROM shelves s
+    JOIN products p ON s.category_id = p.category_id
+    LIMIT 100;
+"""
+cursor.execute(query)
+results = cursor.fetchall()
+shelf_product_pairs = set(results)
 # Generate fake data for shelf_product (assuming shelf_product is a table to link products to shelves)
 for shelf_id, product_id in shelf_product_pairs:
     quantity = random.randint(1, 10)

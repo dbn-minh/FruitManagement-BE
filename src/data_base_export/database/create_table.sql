@@ -125,6 +125,7 @@ CREATE TABLE `orders` (
   `user_id` INT DEFAULT NULL,
   `order_date` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   `total_price` FLOAT DEFAULT NULL,
+  `order_quantity` INT DEFAULT NULL,
   PRIMARY KEY (`order_id`),
   FOREIGN KEY (`user_id`) REFERENCES `users` (`user_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
