@@ -29,10 +29,3 @@ warehouseRoutes.post("/stock-adjust/add-shelf", addProductToShelf);
 warehouseRoutes.get("/import", getImport);
 
 export default warehouseRoutes;
-
-// /warehouse
-// 	/ (GET) - get all Export include productName, attributes: quantity, status ???
-// 	/reorder ???
-// 	/stock-adjust (GET) - get export include shelf
-// 	/add-to-shelf (PUT)
-// 	/shelf (GET) - get all fruits on shelf (Admin)
