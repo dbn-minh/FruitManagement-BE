@@ -10,3 +10,5 @@ app.use(express.static("."));
 
 app.listen(8080);
 app.use(rootRoute);
+
+export default app;
