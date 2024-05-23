@@ -210,13 +210,14 @@ for _ in range(100):
     user_id = random.choice(user_ids)
     total_price = round(random.uniform(20, 100), 2)
     order_date = fake.date_this_year()
+    order_quantity = random.randint(1, 20)
     cursor.execute(
         """
         INSERT INTO orders 
-        (user_id, total_price, order_date) 
-        VALUES (%s, %s, %s)
+        (user_id, total_price, order_date, order_quantity) 
+        VALUES (%s, %s, %s, %s)
         """, 
-        (user_id, total_price, order_date)
+        (user_id, total_price, order_date, order_quantity)
     )
 
 # Generate unique pairs for order_products
