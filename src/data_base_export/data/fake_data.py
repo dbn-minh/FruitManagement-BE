@@ -14,9 +14,9 @@ total_export = 10
 # Create a connection to your MySQL database
 conn = mysql.connector.connect(
     host='localhost',  # Separate host 
-    port=3306,         # Separate port
+    port=3380,         # Separate port
     user='root',
-    password='MaL1504@',
+    password='1234',
     database='db_manach'
 )
 cursor = conn.cursor()

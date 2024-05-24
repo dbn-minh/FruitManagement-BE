@@ -1,18 +1,9 @@
 import _sequelize from 'sequelize';
 const { Model, Sequelize } = _sequelize;
 
-export default class shelf_products extends Model {
+export default class export_products extends Model {
   static init(sequelize, DataTypes) {
   return super.init({
-    shelf_id: {
-      type: DataTypes.INTEGER,
-      allowNull: false,
-      primaryKey: true,
-      references: {
-        model: 'shelves',
-        key: 'shelf_id'
-      }
-    },
     product_id: {
       type: DataTypes.INTEGER,
       allowNull: false,
@@ -22,14 +13,22 @@ export default class shelf_products extends Model {
         key: 'product_id'
       }
     },
-    quantity: {
-      type: DataTypes.FLOAT,
-      allowNull: true,
-      defaultValue: 0
+    export_shelf_id: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+      primaryKey: true,
+      references: {
+        model: 'export_shelfs',
+        key: 'export_shelf_id'
+      }
+    },
+    export_product_quantity: {
+      type: DataTypes.INTEGER,
+      allowNull: true
     }
   }, {
     sequelize,
-    tableName: 'shelf_products',
+    tableName: 'export_products',
     timestamps: false,
     indexes: [
       {
@@ -37,22 +36,22 @@ export default class shelf_products extends Model {
         unique: true,
         using: "BTREE",
         fields: [
-          { name: "shelf_id" },
           { name: "product_id" },
+          { name: "export_shelf_id" },
         ]
       },
       {
-        name: "idx_shelf_product_id",
+        name: "idx_export_product_id",
         using: "BTREE",
         fields: [
           { name: "product_id" },
         ]
       },
       {
-        name: "idx_shelf_shelf_id",
+        name: "idx_export_shelf_id",
         using: "BTREE",
         fields: [
-          { name: "shelf_id" },
+          { name: "export_shelf_id" },
         ]
       },
     ]

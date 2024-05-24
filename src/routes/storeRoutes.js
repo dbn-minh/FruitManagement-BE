@@ -6,8 +6,8 @@ import {
   getProduct,
   getProductDetails,
   removeProduct,
-  searchAdminProducts,
-  searchProducts,
+  // searchAdminProducts,
+  // searchProducts,
 } from "../controllers/storeController.js";
 
 const storeRoutes = express.Router();
@@ -227,7 +227,7 @@ storeRoutes.put("/all-product/remove-product", removeProduct);
  *       404:
  *         description: Products not found
  */
-storeRoutes.get("/search/:product_name", searchProducts);
+// storeRoutes.get("/search/:product_name", searchProducts);
 
 /**
  * @swagger
@@ -261,6 +261,6 @@ storeRoutes.get("/search/:product_name", searchProducts);
  *       404:
  *         description: Products not found
  */
-storeRoutes.get("/search-all/:product_name", searchAdminProducts);
+// storeRoutes.get("/search-all/:product_name", searchAdminProducts);
 
 export default storeRoutes;

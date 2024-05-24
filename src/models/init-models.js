@@ -1,6 +1,8 @@
 import _sequelize from "sequelize";
 const DataTypes = _sequelize.DataTypes;
 import _categories from  "./categories.js";
+import _export_products from  "./export_products.js";
+import _export_shelfs from  "./export_shelfs.js";
 import _exports from  "./exports.js";
 import _imports from  "./imports.js";
 import _order_products from  "./order_products.js";
@@ -16,6 +18,8 @@ import _warehouses from  "./warehouses.js";
 
 export default function initModels(sequelize) {
   const categories = _categories.init(sequelize, DataTypes);
+  const export_products = _export_products.init(sequelize, DataTypes);
+  const export_shelfs = _export_shelfs.init(sequelize, DataTypes);
   const exports = _exports.init(sequelize, DataTypes);
   const imports = _imports.init(sequelize, DataTypes);
   const order_products = _order_products.init(sequelize, DataTypes);
@@ -29,7 +33,9 @@ export default function initModels(sequelize) {
   const warehouse_products = _warehouse_products.init(sequelize, DataTypes);
   const warehouses = _warehouses.init(sequelize, DataTypes);
 
-  orders.belongsToMany(products, { as: 'product_id_products', through: order_products, foreignKey: "order_id", otherKey: "product_id" });
+  export_shelfs.belongsToMany(products, { as: 'product_id_products', through: export_products, foreignKey: "export_shelf_id", otherKey: "product_id" });
+  orders.belongsToMany(products, { as: 'product_id_products_order_products', through: order_products, foreignKey: "order_id", otherKey: "product_id" });
+  products.belongsToMany(export_shelfs, { as: 'export_shelf_id_export_shelves', through: export_products, foreignKey: "product_id", otherKey: "export_shelf_id" });
   products.belongsToMany(orders, { as: 'order_id_orders', through: order_products, foreignKey: "product_id", otherKey: "order_id" });
   products.belongsToMany(shelves, { as: 'shelf_id_shelves', through: shelf_products, foreignKey: "product_id", otherKey: "shelf_id" });
   products.belongsToMany(warehouses, { as: 'warehouse_id_warehouses', through: warehouse_products, foreignKey: "product_id", otherKey: "warehouse_id" });
@@ -39,10 +45,14 @@ export default function initModels(sequelize) {
   categories.hasMany(products, { as: "products", foreignKey: "category_id"});
   shelves.belongsTo(categories, { as: "category", foreignKey: "category_id"});
   categories.hasMany(shelves, { as: "shelves", foreignKey: "category_id"});
+  export_products.belongsTo(export_shelfs, { as: "export_shelf", foreignKey: "export_shelf_id"});
+  export_shelfs.hasMany(export_products, { as: "export_products", foreignKey: "export_shelf_id"});
+  export_shelfs.belongsTo(exports, { as: "export", foreignKey: "export_id"});
+  exports.hasMany(export_shelfs, { as: "export_shelves", foreignKey: "export_id"});
   order_products.belongsTo(orders, { as: "order", foreignKey: "order_id"});
   orders.hasMany(order_products, { as: "order_products", foreignKey: "order_id"});
-  exports.belongsTo(products, { as: "product", foreignKey: "product_id"});
-  products.hasMany(exports, { as: "exports", foreignKey: "product_id"});
+  export_products.belongsTo(products, { as: "product", foreignKey: "product_id"});
+  products.hasMany(export_products, { as: "export_products", foreignKey: "product_id"});
   imports.belongsTo(products, { as: "product", foreignKey: "product_id"});
   products.hasMany(imports, { as: "imports", foreignKey: "product_id"});
   order_products.belongsTo(products, { as: "product", foreignKey: "product_id"});
@@ -53,8 +63,8 @@ export default function initModels(sequelize) {
   products.hasMany(warehouse_products, { as: "warehouse_products", foreignKey: "product_id"});
   users.belongsTo(roles, { as: "role", foreignKey: "role_id"});
   roles.hasMany(users, { as: "users", foreignKey: "role_id"});
-  exports.belongsTo(shelves, { as: "shelf", foreignKey: "shelf_id"});
-  shelves.hasMany(exports, { as: "exports", foreignKey: "shelf_id"});
+  export_shelfs.belongsTo(shelves, { as: "shelf", foreignKey: "shelf_id"});
+  shelves.hasMany(export_shelfs, { as: "export_shelves", foreignKey: "shelf_id"});
   shelf_products.belongsTo(shelves, { as: "shelf", foreignKey: "shelf_id"});
   shelves.hasMany(shelf_products, { as: "shelf_products", foreignKey: "shelf_id"});
   imports.belongsTo(suppliers, { as: "supplier", foreignKey: "supplier_id"});
@@ -70,6 +80,8 @@ export default function initModels(sequelize) {
 
   return {
     categories,
+    export_products,
+    export_shelfs,
     exports,
     imports,
     order_products,

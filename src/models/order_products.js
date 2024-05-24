@@ -23,7 +23,7 @@ export default class order_products extends Model {
       }
     },
     order_product_quantity: {
-      type: DataTypes.INTEGER,
+      type: DataTypes.FLOAT,
       allowNull: true
     }
   }, {
@@ -41,10 +41,17 @@ export default class order_products extends Model {
         ]
       },
       {
-        name: "product_id",
+        name: "idx_order_product_id",
         using: "BTREE",
         fields: [
           { name: "product_id" },
+        ]
+      },
+      {
+        name: "idx_order_order_id",
+        using: "BTREE",
+        fields: [
+          { name: "order_id" },
         ]
       },
     ]

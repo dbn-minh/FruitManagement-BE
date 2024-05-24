@@ -38,10 +38,6 @@ export default class users extends Model {
       type: DataTypes.STRING(255),
       allowNull: true
     },
-    address: {
-      type: DataTypes.STRING(255),
-      allowNull: true
-    },
     bank_account: {
       type: DataTypes.STRING(255),
       allowNull: true

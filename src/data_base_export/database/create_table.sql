@@ -1,5 +1,4 @@
-CREATE DATABASE db_manach;
-
+  
 USE db_manach;
 
 -- Drop tables if they exist

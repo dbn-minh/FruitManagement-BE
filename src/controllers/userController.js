@@ -11,6 +11,7 @@ export const getProfile = async (req, res) => {
     let { user_id } = req.params;
     let data = await model.users.findOne({
       where: { user_id },
+      include: ["role"],
     });
     responseData(res, "Success", data, 200);
   } catch {
@@ -21,7 +22,7 @@ export const getProfile = async (req, res) => {
 export const updateProfile = async (req, res) => {
   try {
     let { user_id } = req.params;
-    let { phone, bank_account, email, address } = req.body;
+    let { phone, bank_account, email, full_name } = req.body;
     let getNewProfile = await model.users.findOne({
       where: {
         user_id,
@@ -30,7 +31,7 @@ export const updateProfile = async (req, res) => {
     getNewProfile.phone = phone;
     getNewProfile.bank_account = bank_account;
     getNewProfile.email = email;
-    getNewProfile.address = address;
+    getNewProfile.full_name = full_name;
 
     await model.users.update(getNewProfile.dataValues, {
       where: {
@@ -104,8 +105,8 @@ export const checkOut = async (req, res) => {
       await model.order_products.create({
         order_id: newOrder.order_id,
         product_id,
-        order_product_quantity: quantity, // wait for database
-        subtotal, // wait for database
+        order_product_quantity: quantity,
+        subtotal,
       });
     }
 

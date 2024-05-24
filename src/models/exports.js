@@ -18,30 +18,14 @@ export default class exports extends Model {
         key: 'warehouse_id'
       }
     },
-    product_id: {
-      type: DataTypes.INTEGER,
-      allowNull: true,
-      references: {
-        model: 'products',
-        key: 'product_id'
-      }
-    },
-    shelf_id: {
-      type: DataTypes.INTEGER,
-      allowNull: true,
-      references: {
-        model: 'shelves',
-        key: 'shelf_id'
-      }
-    },
-    quantity: {
-      type: DataTypes.FLOAT,
-      allowNull: true
-    },
     export_date: {
       type: DataTypes.DATE,
       allowNull: true,
       defaultValue: Sequelize.Sequelize.literal('CURRENT_TIMESTAMP')
+    },
+    export_quantity: {
+      type: DataTypes.INTEGER,
+      allowNull: true
     }
   }, {
     sequelize,
@@ -61,20 +45,6 @@ export default class exports extends Model {
         using: "BTREE",
         fields: [
           { name: "warehouse_id" },
-        ]
-      },
-      {
-        name: "idx_export_product_id",
-        using: "BTREE",
-        fields: [
-          { name: "product_id" },
-        ]
-      },
-      {
-        name: "idx_export_shelf_id",
-        using: "BTREE",
-        fields: [
-          { name: "shelf_id" },
         ]
       },
     ]

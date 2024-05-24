@@ -5,6 +5,7 @@ import { Op } from "sequelize";
 
 let model = initModels(sequelize);
 
+// Done, get all the category for choosing
 export const getCategory = async (req, res) => {
   try {
     let data = await model.categories.findAll();
@@ -14,16 +15,28 @@ export const getCategory = async (req, res) => {
   }
 };
 
+// After choosing the category, get all the products on shelf belong to the category chosen
+// and the quantity of that product in shelf must > 0
 export const getCategoryProducts = async (req, res) => {
   try {
     let { category_id } = req.params;
     let data = await model.products.findAll({
       where: {
         category_id,
-        selling_price: {
-          [Op.gt]: 0,
-        },
       },
+      include: [
+        {
+          model: model.shelf_products,
+          as: "shelf_products",
+          required: true,
+          where: {
+            quantity: {
+              [Op.gt]: 0, // Use shelf_products.quantity as condition
+            },
+          },
+          attributes: [],
+        },
+      ],
     });
     responseData(res, "Success", data, 200);
   } catch {
@@ -31,6 +44,7 @@ export const getCategoryProducts = async (req, res) => {
   }
 };
 
+// Click to see details of product
 export const getProductDetails = async (req, res) => {
   try {
     let { product_id, category_id } = req.params;
@@ -39,16 +53,21 @@ export const getProductDetails = async (req, res) => {
         category_id,
         product_id,
       },
+      include: [
+        {
+          model: model.shelves,
+          as: "shelf_id_shelves",
+          attributes: ["date_on_shelf"],
+        },
+      ],
     });
-    // if (!data) {
-    //   return responseData(res, "No products to display", "", 404);
-    // }
     responseData(res, "Success", data, 200);
   } catch {
     responseData(res, "Error ...", "", 500);
   }
 };
 
+// Get all product in Products, but if date on shelf is empty -> must return null in FE
 export const getProduct = async (req, res) => {
   try {
     let data = await model.products.findAll({
@@ -59,6 +78,13 @@ export const getProduct = async (req, res) => {
           [Op.gt]: 0,
         },
       },
+      include: [
+        {
+          model: model.shelves,
+          as: "shelf_id_shelves",
+          attributes: ["date_on_shelf"],
+        },
+      ],
     });
     responseData(res, "Success", data, 200);
   } catch {
@@ -66,24 +92,29 @@ export const getProduct = async (req, res) => {
   }
 };
 
+// Remove the quantity in warehouse and shelf, then
 export const removeProduct = async (req, res) => {
   try {
     let { product_id } = req.body;
-    let getProduct = await model.products.findOne({
-      where: {
-        product_id,
-      },
-    });
-    if (!getProduct) {
-      return responseData(res, "No product found", "", 404);
-    }
-    // Selling_price -> -1: not fetch
-    getProduct.selling_price = 0;
-    await model.products.update(getProduct.dataValues, {
-      where: {
-        product_id: getProduct.product_id,
-      },
-    });
+    // Update quantity to 0 in warehouse_products
+    await model.warehouse_products.update(
+      { quantity: 0 },
+      {
+        where: {
+          product_id,
+        },
+      }
+    );
+
+    // Update quantity to 0 in shelf_products
+    await model.shelf_products.update(
+      { quantity: 0 },
+      {
+        where: {
+          product_id,
+        },
+      }
+    );
 
     responseData(res, "successfully", "Deleted product", 200);
   } catch {
@@ -91,11 +122,12 @@ export const removeProduct = async (req, res) => {
   }
 };
 
+// Add all the information, img not yet upload by file
 export const addProduct = async (req, res) => {
   try {
     let {
       product_name,
-      product_description,
+      description,
       selling_price,
       product_condition,
       product_img,
@@ -103,7 +135,7 @@ export const addProduct = async (req, res) => {
     } = req.body;
     let data = await model.products.create({
       product_name,
-      product_description,
+      description,
       selling_price,
       product_condition,
       product_img,
@@ -117,40 +149,40 @@ export const addProduct = async (req, res) => {
   }
 };
 
-export const searchProducts = async (req, res) => {
-  try {
-    let { product_name } = req.params;
-    let data = await model.products.findAll({
-      where: {
-        selling_price: {
-          [Op.gte]: 0,
-        },
-        product_name: {
-          [Op.like]: "%" + product_name + "%",
-        },
-      },
-    });
-    responseData(res, "successfully", data, 200);
-  } catch {
-    responseData(res, "Error", "", 500);
-  }
-};
+// export const searchProducts = async (req, res) => {
+//   try {
+//     let { product_name } = req.params;
+//     let data = await model.products.findAll({
+//       where: {
+//         selling_price: {
+//           [Op.gte]: 0,
+//         },
+//         product_name: {
+//           [Op.like]: "%" + product_name + "%",
+//         },
+//       },
+//     });
+//     responseData(res, "successfully", data, 200);
+//   } catch {
+//     responseData(res, "Error", "", 500);
+//   }
+// };
 
-export const searchAdminProducts = async (req, res) => {
-  try {
-    let { product_name } = req.params;
-    let data = await model.products.findAll({
-      where: {
-        // selling_price: {
-        //   [Op.gte]: 0,
-        // },
-        product_name: {
-          [Op.like]: "%" + product_name + "%",
-        },
-      },
-    });
-    responseData(res, "successfully", data, 200);
-  } catch {
-    responseData(res, "Error", "", 500);
-  }
-};
+// export const searchAdminProducts = async (req, res) => {
+//   try {
+//     let { product_name } = req.params;
+//     let data = await model.products.findAll({
+//       where: {
+//         // selling_price: {
+//         //   [Op.gte]: 0,
+//         // },
+//         product_name: {
+//           [Op.like]: "%" + product_name + "%",
+//         },
+//       },
+//     });
+//     responseData(res, "successfully", data, 200);
+//   } catch {
+//     responseData(res, "Error", "", 500);
+//   }
+// };
