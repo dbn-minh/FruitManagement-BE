@@ -1,6 +1,7 @@
 import mysql.connector
 from faker import Faker
 import random
+from datetime import datetime, timedelta
 
 total_product = 66
 total_supplier = 10
@@ -8,6 +9,7 @@ total_category = 10
 total_shelf = 10
 total_user = 10
 total_order = 100
+total_export = 10
 
 # Create a connection to your MySQL database
 conn = mysql.connector.connect(
@@ -122,7 +124,7 @@ products = [
 
 for product in products:
     cursor.execute(
-        "INSERT INTO products (product_id, product_name, product_description, selling_price, import_price, product_condition, product_img, category_id) VALUES (%s, %s, %s, %s, %s, %s, %s, %s)",
+        "INSERT INTO products (product_id, product_name, description, selling_price, import_price, product_condition, product_img, category_id) VALUES (%s, %s, %s, %s, %s, %s, %s, %s)",
         product
     )
 
@@ -165,19 +167,17 @@ for _ in range(100):
     )
 
 # Generate fake data for exports
-for _ in range(100):
+for _ in range(total_export):
     warehouse_id = 1
-    product_id = random.randint(1, total_product)
-    shelf_id = random.randint(1, total_shelf)
     export_date = fake.date_this_year()
-    quantity = random.randint(10, 100)
+    export_quantity = random.randint(50, 100)
     cursor.execute(
         """
         INSERT INTO exports 
-        (warehouse_id, product_id, shelf_id, export_date, quantity) 
-        VALUES (%s, %s, %s, %s, %s)
+        (warehouse_id, export_date, export_quantity) 
+        VALUES (%s, %s, %s)
         """, 
-        (warehouse_id, product_id, shelf_id, export_date, quantity)
+        (warehouse_id, export_date, export_quantity)
     )
 
 cursor.execute("SELECT role_id FROM roles")
@@ -191,15 +191,14 @@ for _ in range(10):
     full_name = fake.name()
     email = fake.email()
     phone = fake.phone_number()
-    address = fake.address()
     bank_account = fake.iban()  # Using iban for fake bank account
     cursor.execute(
         """
         INSERT INTO users 
-        (user_name, user_password, role_id, full_name, email, phone, address, bank_account) 
-        VALUES (%s, %s, %s, %s, %s, %s, %s, %s)
+        (user_name, user_password, role_id, full_name, email, phone, bank_account) 
+        VALUES (%s, %s, %s, %s, %s, %s, %s)
         """, 
-        (user_name, user_password, role_id, full_name, email, phone, address, bank_account)
+        (user_name, user_password, role_id, full_name, email, phone, bank_account)
     )
 conn.commit()
 
@@ -209,7 +208,14 @@ user_ids = [user_id[0] for user_id in cursor.fetchall()]
 for _ in range(100):
     user_id = random.choice(user_ids)
     total_price = round(random.uniform(20, 100), 2)
-    order_date = fake.date_this_year()
+    
+    # Generate a random date within the last 7 days
+    start_date = datetime.now() - timedelta(days=7)
+    random_date = start_date + timedelta(
+        seconds=random.randint(0, int((datetime.now() - start_date).total_seconds())),
+    )
+    order_date = random_date.strftime("%Y-%m-%d")
+    
     order_quantity = random.randint(1, 20)
     cursor.execute(
         """
@@ -302,6 +308,39 @@ cursor.execute("""
     ) wp ON w.warehouse_id = wp.warehouse_id
     SET w.quantity = wp.total_quantity
 """)
+
+# Generate fake data for export_shelfs
+for _ in range(100):
+    shelf_id = random.randint(1, 10)
+    export_id = random.randint(1, total_export)
+    export_shelf_quantity = random.randint(1, 10)
+    cursor.execute(
+        """
+        INSERT INTO export_shelfs 
+        (shelf_id, export_id, export_shelf_quantity) 
+        VALUES (%s, %s, %s)
+        """, 
+        (shelf_id, export_id, export_shelf_quantity)
+    )
+    
+# Generate fake data for export_shelfs
+export_shelfs_pairs = set()
+while len(export_shelfs_pairs) < 100:
+    product_id = random.randint(1, total_product)
+    export_shelf_id = random.randint(1, 100)
+    export_shelfs_pairs.add((product_id, export_shelf_id))
+
+for product_id, export_shelf_id in export_shelfs_pairs:
+    export_product_quantity = random.randint(1, 10)
+    cursor.execute(
+        """
+        INSERT INTO export_products 
+        (product_id, export_shelf_id, export_product_quantity) 
+        VALUES (%s, %s, %s)
+        """, 
+        (product_id, export_shelf_id, export_product_quantity)
+    )
+
 
 # Commit the transaction
 conn.commit()

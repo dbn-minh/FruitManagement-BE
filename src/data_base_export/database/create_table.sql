@@ -2,27 +2,24 @@ CREATE DATABASE db_manach;
 
 USE db_manach;
 
-DROP TABLE IF EXISTS `suppliers`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!50503 SET character_set_client = utf8mb4 */;
+-- Drop tables if they exist
+DROP TABLE IF EXISTS `suppliers`, `warehouses`, `categories`, `products`, `shelves`, `imports`, `exports`, `roles`, `users`, `orders`, `order_products`, `warehouse_products`, `shelf_products`, `export_products`, `export_shelf`, `export_product`;
+
+-- Create suppliers table - done 
 CREATE TABLE `suppliers` (
   `supplier_id` INT NOT NULL AUTO_INCREMENT,
   `supplier_name` VARCHAR(255) COLLATE utf8mb4_unicode_ci NOT NULL,
   PRIMARY KEY (`supplier_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
-DROP TABLE IF EXISTS `warehouses`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!50503 SET character_set_client = utf8mb4 */;
+-- Create warehouses table - done 
 CREATE TABLE `warehouses` (
   `warehouse_id` INT NOT NULL AUTO_INCREMENT,
   `quantity` INT DEFAULT NULL,
   PRIMARY KEY (`warehouse_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
-DROP TABLE IF EXISTS `categories`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!50503 SET character_set_client = utf8mb4 */;
+-- Create categories table - done 
 CREATE TABLE `categories` (
   `category_id` INT NOT NULL AUTO_INCREMENT,
   `category_name` VARCHAR(255) COLLATE utf8mb4_unicode_ci NOT NULL,
@@ -31,25 +28,22 @@ CREATE TABLE `categories` (
   PRIMARY KEY (`category_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
-DROP TABLE IF EXISTS `products`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!50503 SET character_set_client = utf8mb4 */;
+
+-- Create products table - done 
 CREATE TABLE `products` (
   `product_id` INT NOT NULL AUTO_INCREMENT,
-  `product_name` VARCHAR(255) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `product_description` TEXT COLLATE utf8mb4_unicode_ci,
+  `product_name` VARCHAR(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `description` TEXT COLLATE utf8mb4_unicode_ci,
   `selling_price` FLOAT DEFAULT NULL,
   `import_price` FLOAT DEFAULT NULL,
   `product_condition` VARCHAR(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `product_img` VARCHAR(255) COLLATE utf8mb4_unicode_ci,
+  `product_img` VARCHAR(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `category_id` INT DEFAULT NULL,
   PRIMARY KEY (`product_id`),
   FOREIGN KEY (`category_id`) REFERENCES `categories` (`category_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
-DROP TABLE IF EXISTS `shelves`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!50503 SET character_set_client = utf8mb4 */;
+-- Create shelves table - done 
 CREATE TABLE `shelves` (
   `shelf_id` INT NOT NULL AUTO_INCREMENT,
   `quantity` FLOAT DEFAULT NULL,
@@ -59,9 +53,7 @@ CREATE TABLE `shelves` (
   FOREIGN KEY (`category_id`) REFERENCES `categories` (`category_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
-DROP TABLE IF EXISTS `imports`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!50503 SET character_set_client = utf8mb4 */;
+-- Create imports table - done 
 CREATE TABLE `imports` (
   `import_id` INT NOT NULL AUTO_INCREMENT,
   `warehouse_id` INT DEFAULT NULL,
@@ -75,34 +67,24 @@ CREATE TABLE `imports` (
   FOREIGN KEY (`product_id`) REFERENCES `products` (`product_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
-DROP TABLE IF EXISTS `exports`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!50503 SET character_set_client = utf8mb4 */;
+-- Create exports table
 CREATE TABLE `exports` (
   `export_id` INT NOT NULL AUTO_INCREMENT,
   `warehouse_id` INT DEFAULT NULL,
-  `product_id` INT DEFAULT NULL,
-  `shelf_id` INT DEFAULT NULL,
-  `quantity` FLOAT DEFAULT NULL,
   `export_date` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  `export_quantity` INT DEFAULT NULL,
   PRIMARY KEY (`export_id`),
-  FOREIGN KEY (`warehouse_id`) REFERENCES `warehouses` (`warehouse_id`),
-  FOREIGN KEY (`product_id`) REFERENCES `products` (`product_id`),
-  FOREIGN KEY (`shelf_id`) REFERENCES `shelves` (`shelf_id`)
+  FOREIGN KEY (`warehouse_id`) REFERENCES `warehouses` (`warehouse_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
-DROP TABLE IF EXISTS `roles`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!50503 SET character_set_client = utf8mb4 */;
+-- Create roles table
 CREATE TABLE `roles` (
   `role_id` INT NOT NULL AUTO_INCREMENT,
   `role_name` VARCHAR(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   PRIMARY KEY (`role_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
-DROP TABLE IF EXISTS `users`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!50503 SET character_set_client = utf8mb4 */;
+-- Create users table
 CREATE TABLE `users` (
   `user_id` INT NOT NULL AUTO_INCREMENT,
   `user_name` VARCHAR(255) COLLATE utf8mb4_unicode_ci NOT NULL,
@@ -111,15 +93,12 @@ CREATE TABLE `users` (
   `full_name` VARCHAR(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `email` VARCHAR(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `phone` VARCHAR(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `address` VARCHAR(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `bank_account` VARCHAR(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   PRIMARY KEY (`user_id`),
   FOREIGN KEY (`role_id`) REFERENCES `roles` (`role_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
-DROP TABLE IF EXISTS `orders`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!50503 SET character_set_client = utf8mb4 */;
+-- Create orders table
 CREATE TABLE `orders` (
   `order_id` INT NOT NULL AUTO_INCREMENT,
   `user_id` INT DEFAULT NULL,
@@ -130,22 +109,17 @@ CREATE TABLE `orders` (
   FOREIGN KEY (`user_id`) REFERENCES `users` (`user_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
-
-DROP TABLE IF EXISTS `order_products`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!50503 SET character_set_client = utf8mb4 */;
+-- Create order_products table
 CREATE TABLE `order_products` (
   `order_id` INT NOT NULL,
   `product_id` INT NOT NULL,
-  `order_product_quantity` INT DEFAULT NULL,
+  `order_product_quantity` FLOAT DEFAULT NULL,
   PRIMARY KEY (`order_id`, `product_id`),
   FOREIGN KEY (`order_id`) REFERENCES `orders` (`order_id`),
   FOREIGN KEY (`product_id`) REFERENCES `products` (`product_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
-DROP TABLE IF EXISTS `warehouse_products`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!50503 SET character_set_client = utf8mb4 */;
+-- Create warehouse_products table
 CREATE TABLE `warehouse_products` (
   `warehouse_id` INT NOT NULL,
   `product_id` INT NOT NULL,
@@ -155,9 +129,7 @@ CREATE TABLE `warehouse_products` (
   FOREIGN KEY (`product_id`) REFERENCES `products` (`product_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
-DROP TABLE IF EXISTS `shelf_products`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!50503 SET character_set_client = utf8mb4 */;
+-- Create shelf_products table
 CREATE TABLE `shelf_products` (
   `shelf_id` INT NOT NULL,
   `product_id` INT NOT NULL,
@@ -167,7 +139,26 @@ CREATE TABLE `shelf_products` (
   FOREIGN KEY (`product_id`) REFERENCES `products` (`product_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
+-- Create export_shelf table
+CREATE TABLE `export_shelfs` (
+  `export_shelf_id` INT NOT NULL AUTO_INCREMENT,
+  `shelf_id` INT DEFAULT NULL,
+  `export_id` INT DEFAULT NULL,
+  `export_shelf_quantity` FLOAT DEFAULT NULL,
+  PRIMARY KEY (`export_shelf_id`),
+  FOREIGN KEY (`shelf_id`) REFERENCES `shelves` (`shelf_id`),
+  FOREIGN KEY (`export_id`) REFERENCES `exports` (`export_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
+-- Create export_products table
+CREATE TABLE `export_products` (
+  `product_id` INT NOT NULL,
+  `export_shelf_id` INT NOT NULL,
+  `export_product_quantity` INT DEFAULT NULL,
+  PRIMARY KEY (`product_id`, `export_shelf_id`),
+  FOREIGN KEY (`product_id`) REFERENCES `products` (`product_id`),
+  FOREIGN KEY (`export_shelf_id`) REFERENCES `export_shelfs` (`export_shelf_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- Add indexes to foreign key columns
 CREATE INDEX `idx_import_warehouse_id` ON `imports` (`warehouse_id`);
@@ -175,8 +166,16 @@ CREATE INDEX `idx_import_product_id` ON `imports` (`product_id`);
 CREATE INDEX `idx_import_supplier_id` ON `imports` (`supplier_id`);
 
 CREATE INDEX `idx_export_warehouse_id` ON `exports` (`warehouse_id`);
-CREATE INDEX `idx_export_product_id` ON `exports` (`product_id`);
-CREATE INDEX `idx_export_shelf_id` ON `exports` (`shelf_id`);
 
+CREATE INDEX `idx_order_user_id` ON `orders` (`user_id`);
+CREATE INDEX `idx_order_product_id` ON `order_products` (`product_id`);
+CREATE INDEX `idx_order_order_id` ON `order_products` (`order_id`);
 
+CREATE INDEX `idx_warehouse_product_id` ON `warehouse_products` (`product_id`);
+CREATE INDEX `idx_warehouse_warehouse_id` ON `warehouse_products` (`warehouse_id`);
 
+CREATE INDEX `idx_shelf_product_id` ON `shelf_products` (`product_id`);
+CREATE INDEX `idx_shelf_shelf_id` ON `shelf_products` (`shelf_id`);
+
+CREATE INDEX `idx_export_product_id` ON `export_products` (`product_id`);
+CREATE INDEX `idx_export_shelf_id` ON `export_products` (`export_shelf_id`);
