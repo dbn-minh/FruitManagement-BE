@@ -129,21 +129,22 @@ for product in products:
     )
 
 shelves = [
-(1, 10, 1, '2024-05-02'), 
-(2, 10, 2, '2024-05-02'), 
-(3, 10, 3, '2024-05-02'), 
-(4, 10, 4, '2024-05-02'), 
-(5, 10, 5, '2024-05-02'), 
-(6, 10, 6, '2024-05-02'), 
-(7, 10, 7, '2024-05-02'), 
-(8, 10, 8, '2024-05-02'), 
-(9, 10, 9, '2024-05-02'), 
-(10, 10, 10, '2024-05-02')
+(1, 1, '2024-05-22'), 
+(2, 2, '2024-05-23'), 
+(3, 3, '2024-05-24'), 
+(4, 4, '2024-05-25'), 
+(5, 5, '2024-05-26'), 
+(6, 6, '2024-05-27'), 
+(7, 7, '2024-05-21'), 
+(8, 8, '2024-05-20'), 
+(9, 9, '2024-05-22'), 
+(10, 10, '2024-05-23')
 ]
 
 # Generate fake data for shelves
-for shelf in shelves:
-    cursor.execute("INSERT INTO shelves (shelf_id, quantity, category_id, date_on_shelf) VALUES (%s, %s, %s, %s)", shelf)
+for shelf_id, category_id, date_on_shelf in shelves:
+    quantity = random.randint(50, 100)
+    cursor.execute("INSERT INTO shelves (shelf_id, quantity, category_id, date_on_shelf) VALUES (%s, %s, %s, %s)", (shelf_id, quantity, category_id, date_on_shelf))
 
 # Generate fake data for warehouses
 cursor.execute("INSERT INTO warehouses (warehouse_id, quantity) VALUES (1, 500)")
@@ -256,9 +257,21 @@ query = """
 cursor.execute(query)
 results = cursor.fetchall()
 shelf_product_pairs = set(results)
+
+cursor.execute("SELECT SUM(quantity) FROM shelves")
+total_quantity = cursor.fetchone()[0]
+
 # Generate fake data for shelf_product (assuming shelf_product is a table to link products to shelves)
+inserted_quantity = 0
+
 for shelf_id, product_id in shelf_product_pairs:
-    quantity = random.randint(1, 10)
+    remaining_quantity = total_quantity - inserted_quantity
+    if remaining_quantity <= 0:
+        break
+    elif remaining_quantity > 10:
+        quantity = random.randint(1, 10)
+    else:
+        quantity = random.randint(1, remaining_quantity)
     cursor.execute(
         """
         INSERT INTO shelf_products
@@ -267,11 +280,13 @@ for shelf_id, product_id in shelf_product_pairs:
         """, 
         (shelf_id, product_id, quantity)
     )
+    inserted_quantity += quantity
+    
 conn.commit()    
 cursor.execute("""
     UPDATE shelves s
     JOIN (
-        SELECT shelf_id, COUNT(*) as total_products
+        SELECT shelf_id, SUM(quantity) as total_products
         FROM shelf_products
         GROUP BY shelf_id
     ) sp ON s.shelf_id = sp.shelf_id
