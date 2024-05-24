@@ -78,7 +78,7 @@ export const getProductsShelfs = async (req, res) => {
   }
 };
 
-// add the function to create the new export_id
+// Can't store many products in 1 export_id
 export const addProductToShelf = async (req, res) => {
   try {
     let products = req.body.products;
@@ -87,6 +87,7 @@ export const addProductToShelf = async (req, res) => {
       responseData(res, "Nothing to add", "", 400);
       return; // Exit the function early
     }
+    const exportProducts = []; // Array to store products for export
 
     for (const product of products) {
       const { product_id, quantity, shelf_id } = product;
@@ -108,6 +109,13 @@ export const addProductToShelf = async (req, res) => {
         return; // Exit the function if insufficient quantity
       }
 
+      // Push product details to exportProducts array
+      exportProducts.push({
+        product_id,
+        quantity,
+        shelf_id,
+      });
+
       // Update shelf_products with the desired quantity
       await model.shelf_products.increment("quantity", {
         by: quantity,
@@ -125,7 +133,16 @@ export const addProductToShelf = async (req, res) => {
         },
       });
     }
-    responseData(res, "Success", "", 200);
+    // Create a new export record to represent the entire operation
+    const newExport = await model.exports.create({
+      product_id: exportProducts.product_id,
+      warehouse_id: 1,
+      shelf_id: exportProducts.shelf_id,
+      quantity: exportProducts.quantity, // Store all products added to the shelf in the export record
+      export_date: new Date(), // Assuming export_date should be current date
+    });
+
+    responseData(res, "Success", newExport, 200);
   } catch {
     responseData(res, "Error ...", "", 500);
   }
