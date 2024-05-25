@@ -1,4 +1,5 @@
-  
+CREATE DATABASE db_manach;
+
 USE db_manach;
 
 -- Drop tables if they exist
@@ -45,7 +46,7 @@ CREATE TABLE `products` (
 -- Create shelves table - done 
 CREATE TABLE `shelves` (
   `shelf_id` INT NOT NULL AUTO_INCREMENT,
-  `quantity` FLOAT DEFAULT NULL,
+  `quantity` INT DEFAULT NULL,
   `category_id` INT DEFAULT NULL,
   `date_on_shelf` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`shelf_id`),

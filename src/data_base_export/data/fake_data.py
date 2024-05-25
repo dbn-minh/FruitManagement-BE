@@ -1,7 +1,11 @@
 import mysql.connector
-from faker import Faker
+import re
+import string
 import random
+import random
+from faker import Faker
 from datetime import datetime, timedelta
+
 
 total_product = 66
 total_supplier = 10
@@ -14,15 +18,15 @@ total_export = 10
 # Create a connection to your MySQL database
 conn = mysql.connector.connect(
     host='localhost',  # Separate host 
-    port=3380,         # Separate port
+    port=3306,         # Separate port
     user='root',
-    password='1234',
+    password='MaL1504@',
     database='db_manach'
 )
 cursor = conn.cursor()
 
 # Initialize Faker
-fake = Faker()
+fake = Faker('vi_VN')
 
 # Generate fake data for roles
 roles = ['admin', 'customer', 'manager']
@@ -185,14 +189,29 @@ cursor.execute("SELECT role_id FROM roles")
 role_ids = [role_id[0] for role_id in cursor.fetchall()]
 
 # Generate fake data for users
-for _ in range(10):
+vietnamese_banks = ['Vietcombank', 'Agribank', 'BIDV', 'VietinBank', 'Techcombank', 'MBBank', 'VPBank', 'ACB', 'Sacombank', 'Eximbank']
+for i in range(10):
     user_name = fake.user_name()
-    user_password = fake.password()
+    
+    # Generate a password with at least one special character, one uppercase letter, one digit
+    password_characters = string.ascii_letters + string.digits + string.punctuation
+    while True:
+        user_password = ''.join(random.choice(password_characters) for i in range(10))
+        if (any(c.isupper() for c in user_password) and 
+            any(c.isdigit() for c in user_password) and 
+            any(c in string.punctuation for c in user_password)):
+            break
+
     role_id = random.choice(role_ids)
     full_name = fake.name()
-    email = fake.email()
-    phone = fake.phone_number()
-    bank_account = fake.iban()  # Using iban for fake bank account
+    
+    # Generate email following a specific pattern
+    email = user_name + "@gmail.com"
+    
+    phone = "0" +''.join(random.choice(string.digits) for _ in range(9))
+    
+    bank_name = random.choice(vietnamese_banks)
+    bank_account = bank_name + "-" + ''.join(random.choice(string.digits) for _ in range(12))
     cursor.execute(
         """
         INSERT INTO users 
@@ -246,6 +265,16 @@ for order_id, product_id in order_product_pairs:
         """, 
         (order_id, product_id, order_product_quantity)
     )
+cursor.execute("""
+    UPDATE orders o
+    LEFT JOIN (
+        SELECT order_id, SUM(order_product_quantity) as total_products
+        FROM order_products
+        GROUP BY order_id
+    ) op ON o.order_id = op.order_id
+    SET o.order_quantity = COALESCE(op.total_products, 0)
+""")
+conn.commit()  
     
 # Generate unique pairs for order_products
 query = """
