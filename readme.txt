@@ -1,13 +1,11 @@
-How to run backend source code in local (Giúp Minh Đoàn khỏi phải viết swagger)
+How to run backend source code in local 
 
 1/ Docker: 
 - Gõ dòng sau vào terminal sau khi đã cài Docker:
 docker pull mysql
-
-then:
 docker run --name manach -e MYSQL_ROOT_PASSWORD=1234 -d -p 3307:3306 mysql
 
-2/ Cài tablePlus, tạo ra connection mới: 
+2/ Cài TablePlus, tạo ra connection mới: 
 {
   name: db_manach
   Host: localhost
@@ -22,14 +20,10 @@ docker run --name manach -e MYSQL_ROOT_PASSWORD=1234 -d -p 3307:3306 mysql
 4/ import the sql file in discord: db_manach.sql
 
 5/ clone the backend source code:
-https://github.com/dbn-minh/FruitManagement-BE.git
-
-(git switch master) -> !!!!!!!!!! use this branch to fetch API
-then type: yarn -> download all the packages
-
-5/ Sequelize-auto:
-type this line to terminal to update the database to the source: 
-yarn sequelize-auto -h localhost -d db_manach -u root -x 1234 -p 3307 --dialect mysql -o src/models -l esm
+git clone https://github.com/dbn-minh/FruitManagement-BE.git
+cd FruitManagement-BE
+git switch master
+yarn
 
 6/ Run using: 
 yarn start
