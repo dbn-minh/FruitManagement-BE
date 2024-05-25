@@ -2,13 +2,13 @@ How to run backend source code in local (Giúp Minh Đoàn khỏi phải viết 
 
 1/ Docker: 
 - Gõ dòng sau vào terminal sau khi đã cài Docker:
-docker run --name manach -e MYSQL_ROOT_PASSWORD=1234 -d -p 3380:3306 mysql
+docker run --name manach -e MYSQL_ROOT_PASSWORD=1234 -d -p 3307:3306 mysql
 
 2/ Cài tablePlus, tạo ra connection mới: 
 {
   name: db_manach
   Host: localhost
-  Port: 3380
+  Port: 3307
   user: root
   password: 1234
 }
@@ -26,7 +26,7 @@ then type: yarn -> download all the packages
 
 5/ Sequelize-auto:
 type this line to terminal to update the database to the source: 
-yarn sequelize-auto -h localhost -d db_manach -u root -x 1234 -p 3380 --dialect mysql -o src/models -l esm
+yarn sequelize-auto -h localhost -d db_manach -u root -x 1234 -p 3307 --dialect mysql -o src/models -l esm
 
 6/ Run using: 
 yarn start
