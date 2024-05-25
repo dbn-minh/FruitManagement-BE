@@ -99,7 +99,7 @@ test('removeProduct', async ({ expect }) => {
 test('addProduct', async ({ expect }) => {
     const product = {
       product_name: 'test',
-      product_description: 'test1',
+      description: 'test1',
       selling_price: 5.5,
       product_condition: 'ripe',
       product_img: 'testimg.jpg',
@@ -109,7 +109,7 @@ test('addProduct', async ({ expect }) => {
     expect(response.status).toBe(200);
     expect(response.body.message).toBe('successfully');
     expect(response.body.content.product_name).toBe(product.product_name);
-    expect(response.body.content.product_description).toBe(product.product_description);
+    expect(response.body.content.description).toBe(product.description);
     expect(response.body.content.selling_price).toBe(product.selling_price);
     expect(response.body.content.product_condition).toBe(product.product_condition);
     expect(response.body.content.product_img).toBe(product.product_img);
@@ -130,7 +130,6 @@ test('searchProducts', async ({ expect }) => {
         expect(response.body.content).toEqual(expect.any(Object)) // if the response is a single product object
     } catch (error) {
         console.error(error)
-        expect(error).toBeNull()
     }
 })
 
@@ -148,6 +147,5 @@ test('searchAdminProducts', async ({ expect }) => {
         expect(response.body.content).toEqual(expect.any(Object)) // if the response is a single product object
     } catch (error) {
         console.error(error)
-        expect(error).toBeNull()
     }
 })

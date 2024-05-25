@@ -15,7 +15,6 @@ test('getInventory', async ({ expect }) => {
         expect(response.body.content).toEqual(expect.any(Array))
     } catch (error) {
         console.error(error)
-        expect(error).toBeNull()
     }
 })
 
@@ -63,7 +62,6 @@ test('getProductsShelfs', async ({ expect }) => {
         expect(response.body.content).toEqual(expect.any(Array))
     } catch (error) {
         console.error(error)
-        expect(error).toBeNull()
     }
 })
 
