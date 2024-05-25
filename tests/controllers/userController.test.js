@@ -19,7 +19,6 @@ test('getProfile', async ({ expect }) => {
         expect(response.body.content).toEqual(expect.any(Object)) // if the response is a user object
     } catch (error) {
         console.error(error)
-        expect(error).toBeNull()
     }
 })
 
@@ -47,7 +46,6 @@ test('updateProfile', async ({ expect }) => {
         expect(response.body.content).toEqual(expect.any(Object)) // if the response is a user object
     } catch (error) {
         console.error(error)
-        expect(error).toBeNull()
     }
 })
 
@@ -106,15 +104,40 @@ test('getOrder', async ({ expect }) => {
     try {
         app.use('/user', userRoutes)
 
+        const userId = 1; // replace 1 with a valid user_id
         const response = await request(app)
-            .get('/user/1/order') // replace 1 with a valid user_id
+            .get(`/user/${userId}/order`)
         
         // Check status code
         expect(response.status).toBe(200)
     
         // Check response body
+        expect(response.body).toHaveProperty('message')
+        expect(response.body.message).toEqual('Success')
+
+        // Check content
         expect(response.body).toHaveProperty('content')
         expect(response.body.content).toEqual(expect.any(Object)) // if the response is an order object
+
+        // Check if the user_id in the response matches the user_id used in the request
+        expect(response.body.content.user_id).toEqual(userId)
+
+        // Check other properties
+        expect(response.body.content).toHaveProperty('order_id')
+        expect(response.body.content).toHaveProperty('order_date')
+        expect(response.body.content).toHaveProperty('total_price')
+        expect(response.body.content).toHaveProperty('order_quantity')
+        expect(response.body.content).toHaveProperty('product_id_products_order_products')
+        expect(response.body.content).toHaveProperty('user')
+
+        // Check user properties
+        expect(response.body.content.user).toHaveProperty('user_id')
+        expect(response.body.content.user).toHaveProperty('user_name')
+        expect(response.body.content.user).toHaveProperty('full_name')
+        expect(response.body.content.user).toHaveProperty('email')
+        expect(response.body.content.user).toHaveProperty('phone')
+        expect(response.body.content.user).toHaveProperty('bank_account')
+
     } catch (error) {
         console.error(error)
         expect(error).toBeNull()

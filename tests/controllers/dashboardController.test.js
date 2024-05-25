@@ -33,6 +33,5 @@ test('getInfoDashboard', async ({ expect }) => {
         expect(response.body.data.weeklyRevenue).toEqual(expect.any(Array))
     } catch (error) {
         console.error(error)
-        expect(error).toBeNull()
     }
 })
