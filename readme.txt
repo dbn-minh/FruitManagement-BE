@@ -2,6 +2,9 @@ How to run backend source code in local (Giúp Minh Đoàn khỏi phải viết 
 
 1/ Docker: 
 - Gõ dòng sau vào terminal sau khi đã cài Docker:
+docker pull mysql
+
+then:
 docker run --name manach -e MYSQL_ROOT_PASSWORD=1234 -d -p 3307:3306 mysql
 
 2/ Cài tablePlus, tạo ra connection mới: 
