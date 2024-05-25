@@ -2,6 +2,7 @@ import { responseData } from "../config/Response.js";
 import initModels from "../models/init-models.js";
 import sequelize from "../models/connect.js";
 import { Op } from "sequelize";
+import fs from "fs";
 
 let model = initModels(sequelize);
 
@@ -128,18 +129,28 @@ export const addProduct = async (req, res) => {
       description,
       selling_price,
       product_condition,
-      product_img,
       category_id,
     } = req.body;
+
+    let { file } = req;
+    let imageData = fs.readFileSync(
+      process.cwd() + "/public/imgs/" + file.filename
+    );
+    // Convert image data to base64 encoding
+    let base64Image = `data:${file.mimetype}; base64, ${Buffer.from(
+      imageData
+    ).toString("base64")}`;
+
     let data = await model.products.create({
       product_name,
       description,
       selling_price,
       product_condition,
-      product_img,
+      product_img: base64Image,
       category_id,
       import_price: 1,
     });
+    await data.save();
 
     responseData(res, "successfully", data, 200);
   } catch (exception) {
@@ -175,21 +186,30 @@ export const searchProducts = async (req, res) => {
   }
 };
 
-// export const searchAdminProducts = async (req, res) => {
-//   try {
-//     let { product_name } = req.params;
-//     let data = await model.products.findAll({
-//       where: {
-//         // selling_price: {
-//         //   [Op.gte]: 0,
-//         // },
-//         product_name: {
-//           [Op.like]: "%" + product_name + "%",
-//         },
-//       },
-//     });
-//     responseData(res, "successfully", data, 200);
-//   } catch {
-//     responseData(res, "Error", "", 500);
-//   }
-// };
+export const uploadPictures = async (req, res) => {
+  // try {
+  // Read the image file from the file system
+  let { file } = req;
+  let { category_id } = req.params;
+  let imageData = fs.readFileSync(
+    process.cwd() + "/public/imgs/" + file.filename
+  );
+
+  // Convert image data to base64 encoding
+  let base64Image = `data:${file.mimetype}; base64, ${Buffer.from(
+    imageData
+  ).toString("base64")}`;
+
+  // Update the admin table with the image data
+  let data = await model.categories.findOne({
+    where: { category_id },
+  });
+
+  // Update the product_img column with the base64 encoded image
+  data.category_img = base64Image;
+  await data.save();
+  responseData(res, "Success", data, 200);
+  // } catch (err) {
+  //   responseData(res, "Error ...", "", 500);
+  // }
+};

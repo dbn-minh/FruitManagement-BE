@@ -8,6 +8,7 @@ import {
   removeProduct,
   // searchAdminProducts,
   searchProducts,
+  uploadPictures,
 } from "../controllers/storeController.js";
 
 const storeRoutes = express.Router();
@@ -170,7 +171,14 @@ storeRoutes.get("/all-product", getProduct);
  *       400:
  *         description: Invalid input
  */
-storeRoutes.post("/all-product/add-product", addProduct);
+
+import upload from "../config/upload.js";
+
+storeRoutes.post(
+  "/all-product/add-product",
+  upload.single("product_img"),
+  addProduct
+);
 
 /**
  * @swagger
@@ -229,38 +237,10 @@ storeRoutes.put("/all-product/remove-product", removeProduct);
  */
 storeRoutes.get("/search/:product_name", searchProducts);
 
-/**
- * @swagger
- * /store/search-all/{product_name}:
- *   get:
- *     summary: Search products in Admin store
- *     tags: [Store]
- *     parameters:
- *       - in: path
- *         name: product_name
- *         required: true
- *         schema:
- *           type: string
- *         description: The product name
- *     responses:
- *       200:
- *         description: Products retrieved successfully
- *         content:
- *           application/json:
- *             schema:
- *               type: array
- *               items:
- *                 type: object
- *                 properties:
- *                   id:
- *                     type: string
- *                   name:
- *                     type: string
- *                   price:
- *                     type: number
- *       404:
- *         description: Products not found
- */
-// storeRoutes.get("/search-all/:product_name", searchAdminProducts);
+storeRoutes.post(
+  "/upload/:category_id",
+  upload.single("category_img"),
+  uploadPictures
+);
 
 export default storeRoutes;
