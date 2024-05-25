@@ -16,6 +16,11 @@ export const getInventory = async (req, res) => {
           required: true,
           attributes: ["quantity"],
         },
+        {
+          model: model.shelf_products,
+          as: "shelf_products",
+          attributes: ["quantity"],
+        },
       ],
     });
 
