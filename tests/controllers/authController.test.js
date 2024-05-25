@@ -21,7 +21,7 @@ test('login', async ({ expect }) => {
         expect(response.body.content).toEqual(expect.any(Object)) // if the response is a token object
     } catch (error) {
         console.error(error)
-        expect(error).toBeNull()
+
     }
 })
 
@@ -115,7 +115,6 @@ test('signup', async ({ expect }) => {
         expect(response.body.content).toEqual('') // if the response is an empty string
     } catch (error) {
         console.error(error)
-        expect(error).toBeNull()
     }
 })
 

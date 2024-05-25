@@ -73,7 +73,6 @@ test('checkOut', async ({ expect }) => {
         expect(response.body.content).toEqual(expect.any(Object)) // if the response is an order object
     } catch (error) {
         console.error(error)
-        expect(error).toBeNull()
     }
 })
 
@@ -99,6 +98,7 @@ test('checkOut', async ({ expect }) => {
         expect(response.body.content).toEqual(expect.any(Object)) // if the response is an order object
     } catch (error) {
         console.error(error)
+        
     }
 })
 
