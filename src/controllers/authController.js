@@ -50,6 +50,35 @@ export const signup = async (req, res) => {
     email,
   } = req.body;
 
+  // Validate bank account
+  if (!/^[a-zA-Z\s]+-\d+$/.test(bank_account)) {
+    return responseData(res, "Invalid bank account format", "", 400);
+  }
+
+  // Validate user password (must contain uppercase, lowercase, digit, and special character)
+  if (
+    !/(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()_+])[A-Za-z\d!@#$%^&*()_+]{8,}/.test(
+      user_password
+    )
+  ) {
+    return responseData(
+      res,
+      "Password must contain at least one uppercase letter, one lowercase letter, one digit, one special character, and be at least 8 characters long",
+      "",
+      400
+    );
+  }
+
+  // Validate phone number (assuming phone number should be exactly 10 digits)
+  if (!/^\d{10}$/.test(phone)) {
+    return responseData(res, "Invalid phone number format", "", 400);
+  }
+
+  // Validate email address
+  if (!/^\S+@\S+\.\S+$/.test(email)) {
+    return responseData(res, "Invalid email address", "", 400);
+  }
+
   let checkUser = await model.users.findOne({
     where: {
       user_name,

@@ -67,22 +67,20 @@ export const getProductDetails = async (req, res) => {
   }
 };
 
-// Get all product in Products, but if date on shelf is empty -> must return null in FE
+// Get all product in Products (must be >0 kg on shelf)
 export const getProduct = async (req, res) => {
   try {
     let data = await model.products.findAll({
-      // include: ["shelf", "product"],
-      // Only get products which selling_price >= 0
-      where: {
-        selling_price: {
-          [Op.gt]: 0,
-        },
-      },
       include: [
         {
-          model: model.shelves,
-          as: "shelf_id_shelves",
-          attributes: ["date_on_shelf"],
+          model: model.shelf_products,
+          as: "shelf_products",
+          attributes: ["quantity"],
+          where: {
+            quantity: {
+              [Op.gt]: 0,
+            },
+          },
         },
       ],
     });
@@ -149,24 +147,33 @@ export const addProduct = async (req, res) => {
   }
 };
 
-// export const searchProducts = async (req, res) => {
-//   try {
-//     let { product_name } = req.params;
-//     let data = await model.products.findAll({
-//       where: {
-//         selling_price: {
-//           [Op.gte]: 0,
-//         },
-//         product_name: {
-//           [Op.like]: "%" + product_name + "%",
-//         },
-//       },
-//     });
-//     responseData(res, "successfully", data, 200);
-//   } catch {
-//     responseData(res, "Error", "", 500);
-//   }
-// };
+export const searchProducts = async (req, res) => {
+  try {
+    let { product_name } = req.params;
+    let data = await model.products.findAll({
+      where: {
+        product_name: {
+          [Op.like]: "%" + product_name + "%",
+        },
+      },
+      include: [
+        {
+          model: model.shelf_products,
+          as: "shelf_products",
+          attributes: [],
+          where: {
+            quantity: {
+              [Op.gt]: 0,
+            },
+          },
+        },
+      ],
+    });
+    responseData(res, "successfully", data, 200);
+  } catch {
+    responseData(res, "Error", "", 500);
+  }
+};
 
 // export const searchAdminProducts = async (req, res) => {
 //   try {

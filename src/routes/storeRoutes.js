@@ -7,7 +7,7 @@ import {
   getProductDetails,
   removeProduct,
   // searchAdminProducts,
-  // searchProducts,
+  searchProducts,
 } from "../controllers/storeController.js";
 
 const storeRoutes = express.Router();
@@ -227,7 +227,7 @@ storeRoutes.put("/all-product/remove-product", removeProduct);
  *       404:
  *         description: Products not found
  */
-// storeRoutes.get("/search/:product_name", searchProducts);
+storeRoutes.get("/search/:product_name", searchProducts);
 
 /**
  * @swagger

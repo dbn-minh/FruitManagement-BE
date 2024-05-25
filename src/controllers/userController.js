@@ -6,6 +6,7 @@ import { Sequelize } from "sequelize";
 let model = initModels(sequelize);
 let Op = Sequelize.Op;
 
+// Get info of user
 export const getProfile = async (req, res) => {
   try {
     let { user_id } = req.params;
@@ -19,10 +20,27 @@ export const getProfile = async (req, res) => {
   }
 };
 
+// Update profile
 export const updateProfile = async (req, res) => {
   try {
     let { user_id } = req.params;
     let { phone, bank_account, email, full_name } = req.body;
+
+    // Validate phone number (assuming phone number should be exactly 10 digits)
+    if (!/^\d{10}$/.test(phone)) {
+      return responseData(res, "Invalid phone number format", "", 400);
+    }
+
+    // Validate bank account
+    if (!/^[a-zA-Z\s]+-\d+$/.test(bank_account)) {
+      return responseData(res, "Invalid bank account format", "", 400);
+    }
+
+    // Validate email address
+    if (!/^\S+@\S+\.\S+$/.test(email)) {
+      return responseData(res, "Invalid email address", "", 400);
+    }
+
     let getNewProfile = await model.users.findOne({
       where: {
         user_id,
@@ -49,6 +67,7 @@ export const updateProfile = async (req, res) => {
   }
 };
 
+// Buy products
 export const checkOut = async (req, res) => {
   try {
     let { user_id } = req.params;
@@ -121,13 +140,23 @@ export const checkOut = async (req, res) => {
   }
 };
 
-// waiting for database
+//
 export const getOrder = async (req, res) => {
   // try {
   let { user_id } = req.params;
   let data = await model.orders.findOne({
     where: { user_id },
-    include: ["order_products", "product_id_products"],
+    include: [
+      {
+        model: model.products,
+        as: "product_id_products_order_products",
+        attributes: ["product_id", "product_name"],
+      },
+      {
+        model: model.users,
+        as: "user",
+      },
+    ],
   });
   responseData(res, "Success", data, 200);
   // } catch {

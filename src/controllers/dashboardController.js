@@ -5,7 +5,7 @@ import { Model, Sequelize } from "sequelize";
 
 let model = initModels(sequelize);
 
-// Pending, not done yet
+// Dashboard - done all information
 export const getInfoDashboard = async (req, res) => {
   try {
     const totalOrdersResult = await model.orders.count();
@@ -67,11 +67,22 @@ export const getInfoDashboard = async (req, res) => {
       "order_product_quantity"
     );
 
+    const productDistribution = {
+      productInWarehouse,
+      productOnShelf,
+      productSold,
+    };
+
     // Fetch total import price of all products in warehouseProducts
     const incoming = await model.warehouse_products.sum("quantity");
 
     // Fetch total quantity of all products in shelf_products
     const outgoing = await model.shelf_products.sum("quantity");
+
+    const warehouseActivities = {
+      incoming,
+      outgoing,
+    };
 
     // Count users with role_id = 2 (Customer)
     const customers = await model.users.count({
@@ -85,10 +96,23 @@ export const getInfoDashboard = async (req, res) => {
     async function getTotalOrdersData() {
       const totalOrdersData = [];
 
+      // Array to store day names
+      const dayNames = [
+        "Sunday",
+        "Monday",
+        "Tuesday",
+        "Wednesday",
+        "Thursday",
+        "Friday",
+        "Saturday",
+      ];
+
       // Loop over the past 7 days
       for (let i = 0; i < 7; i++) {
         const currentDate = new Date();
         currentDate.setDate(currentDate.getDate() - i); // Subtract i days from current date
+        const dayName = dayNames[currentDate.getDay()]; // Get day name
+
         const startDate = new Date(currentDate);
         startDate.setHours(0, 0, 0, 0); // Start of the day
         const endDate = new Date(currentDate);
@@ -105,7 +129,7 @@ export const getInfoDashboard = async (req, res) => {
 
         // Push the total orders for the current day to the array
         totalOrdersData.push({
-          date: startDate.toISOString(),
+          date: dayName,
           totalOrders: totalOrdersForDay,
         });
       }
@@ -119,10 +143,23 @@ export const getInfoDashboard = async (req, res) => {
     async function getTotalRevenueData() {
       const totalRevenueData = [];
 
+      // Array to store day names
+      const dayNames = [
+        "Sunday",
+        "Monday",
+        "Tuesday",
+        "Wednesday",
+        "Thursday",
+        "Friday",
+        "Saturday",
+      ];
+
       // Loop over the past 7 days
       for (let i = 0; i < 7; i++) {
         const currentDate = new Date();
         currentDate.setDate(currentDate.getDate() - i); // Subtract i days from current date
+        const dayName = dayNames[currentDate.getDay()]; // Get day name
+
         const startDate = new Date(currentDate);
         startDate.setHours(0, 0, 0, 0); // Start of the day
         const endDate = new Date(currentDate);
@@ -144,7 +181,7 @@ export const getInfoDashboard = async (req, res) => {
 
         // Push the total revenue for the current day to the array
         totalRevenueData.push({
-          date: startDate.toISOString(),
+          date: dayName,
           totalRevenue: roundedTotalRevenue,
         });
       }
@@ -158,11 +195,8 @@ export const getInfoDashboard = async (req, res) => {
       productionVolume,
       cost,
       bestSellingProducts,
-      productInWarehouse,
-      productOnShelf,
-      productSold,
-      incoming,
-      outgoing,
+      productDistribution,
+      warehouseActivities,
       customers,
       weeklyOrders: totalOrdersData,
       weeklyRevenue: totalRevenueData,
