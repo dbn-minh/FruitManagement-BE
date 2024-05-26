@@ -1,4 +1,4 @@
-import { responseData } from "../config/Response.js";
+import { responseData } from "../config/response.js";
 import initModels from "../models/init-models.js";
 import sequelize from "../models/connect.js";
 import { Model, Sequelize } from "sequelize";
