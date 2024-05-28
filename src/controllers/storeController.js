@@ -95,15 +95,6 @@ export const getProduct = async (req, res) => {
 export const removeProduct = async (req, res) => {
   try {
     let { product_id } = req.body;
-    // Update quantity to 0 in warehouse_products
-    await model.warehouse_products.update(
-      { quantity: 0 },
-      {
-        where: {
-          product_id,
-        },
-      }
-    );
 
     // Update quantity to 0 in shelf_products
     await model.shelf_products.update(

@@ -13,7 +13,7 @@ export const getInventory = async (req, res) => {
         {
           model: model.warehouse_products,
           as: "warehouse_products",
-          // required: true,
+          required: true,
           attributes: ["quantity"],
         },
         {
