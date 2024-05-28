@@ -35,7 +35,7 @@ export const getCategoryProducts = async (req, res) => {
               [Op.gt]: 0, // Use shelf_products.quantity as condition
             },
           },
-          attributes: [],
+          attributes: ["quantity"],
         },
       ],
     });
