@@ -144,7 +144,7 @@ export const checkOut = async (req, res) => {
 export const getOrder = async (req, res) => {
   // try {
   let { user_id } = req.params;
-  let data = await model.orders.findOne({
+  let data = await model.orders.findAll({
     where: { user_id },
     include: [
       {

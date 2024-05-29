@@ -317,6 +317,8 @@ export const getImport = async (req, res) => {
   try {
     let data = await model.imports.findAll({
       include: ["supplier"],
+      order: [["import_id", "DESC"]],
+      limit: 1000,
     });
     responseData(res, "Success", data, 200);
   } catch {

@@ -108,7 +108,7 @@ export const getInfoDashboard = async (req, res) => {
       ];
 
       // Loop over the past 7 days
-      for (let i = 0; i < 7; i++) {
+      for (let i = 6; i >= 0; i--) {
         const currentDate = new Date();
         currentDate.setDate(currentDate.getDate() - i); // Subtract i days from current date
         const dayName = dayNames[currentDate.getDay()]; // Get day name
@@ -155,7 +155,7 @@ export const getInfoDashboard = async (req, res) => {
       ];
 
       // Loop over the past 7 days
-      for (let i = 0; i < 7; i++) {
+      for (let i = 6; i >= 0; i--) {
         const currentDate = new Date();
         currentDate.setDate(currentDate.getDate() - i); // Subtract i days from current date
         const dayName = dayNames[currentDate.getDay()]; // Get day name
