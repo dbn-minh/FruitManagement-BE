@@ -86,24 +86,40 @@ export const reorder = async (req, res) => {
   }
 };
 
+// Function to get a random supplier_id
+function getRandomSupplierId() {
+  // List of supplier IDs
+  const supplierIds = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
+  // Get a random index from the supplierIds array
+  const randomIndex = Math.floor(Math.random() * supplierIds.length);
+  // Return the supplier_id at the random index
+  return supplierIds[randomIndex];
+}
+
 export const reorderProduct = async (req, res) => {
   try {
     let { product_id } = req.params;
     let { quantity } = req.body;
-    let data = await model.warehouse_products.findOne({
-      where: {
-        product_id,
-      },
+    let randomSupplierId = getRandomSupplierId();
+
+    let importData = {
+      warehouse_id: 1,
+      product_id,
+      quantity,
+      supplier_id: randomSupplierId,
+      import_date: new Date(),
+    };
+
+    let createdImport = await model.imports.create(importData);
+
+    let warehouseProduct = await model.warehouse_products.findOne({
+      where: { product_id },
     });
 
-    data.quantity = quantity;
+    warehouseProduct.quantity = quantity;
+    await warehouseProduct.save();
 
-    await model.warehouse_products.update(data.dataValues, {
-      where: {
-        product_id: data.product_id,
-      },
-    });
-    responseData(res, "Success", data, 200);
+    responseData(res, "Success", createdImport, 200);
   } catch {
     responseData(res, "Error ...", "", 500);
   }
